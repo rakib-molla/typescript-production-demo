@@ -78,10 +78,12 @@ const studentSchema = new Schema<Student>({
   emergencyNo: { type: String, required: [true, 'emergency field required'] },
   bloodGroup: {
     type: String,
-    enum: {
-      values: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'],
-      message: "the field can only be one of the following: 'abc'"
-    },
+    enum: 
+    // {
+      // values: 
+      (['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-']),
+      // message: "the field can only be one of the following: 'abc'"
+    // },
   },
   presentAddress: { type: String, required: [true, 'field is required'] },
   permanentAddress: { type: String, required: [true, 'field is required'] },

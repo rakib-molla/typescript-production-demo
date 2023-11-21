@@ -11,6 +11,7 @@ import validator from 'validator';
 import studentValidationSchema from './student/student.validation';
 import bcrypt from 'bcrypt'
 import config from '../../config/index';
+import { boolean } from 'zod';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: { 
@@ -107,22 +108,46 @@ const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({
     enum: ['active', 'blocked'],
     default: 'active',
   },
+  isDeleted:{
+    type: Boolean,
+    default: false,
+  }
 });
+
+//
+
 
 
 // pre save middleware / hook: will work on create() save()
 studentSchema.pre('save', async function(next){
-  console.log(this, 'pre hook: we will save to data');
-  const user = this;
+  // console.log(this, 'pre hook: we will save to data');
+  const user = this; // this refer for document
   user.password = await bcrypt.hash(user.password, Number(config.bcrype_salt_round));
   next();
 })
 
 // post middleware
-studentSchema.post('save', function(){
-  console.log(this, 'post hook: we save to data');
+studentSchema.post('save', function(doc, next){
+  doc.password =''
+  // console.log( 'post hook: we save to data');
+  next()
 })
 
+// Query middleware 
+studentSchema.pre('find', function(next){
+  this.find({isDeleted: {$ne: true}})
+  next();
+})
+// Query middleware 
+studentSchema.pre('findOne', function(next){
+  this.find({isDeleted: {$ne: true}})
+  next();
+})
+// Query middleware 
+studentSchema.pre('aggregate', function(next){
+  this.pipeline().unshift({$match : { isDeleted: {$ne: true}}})
+  next();
+})
 
 
 // creating a custom static method

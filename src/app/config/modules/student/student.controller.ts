@@ -1,24 +1,19 @@
-
 import { Request, Response } from 'express';
 import { StudentServices } from './student.service';
 import studentValidationSchema from './student.validation';
 
-
 const createStudent = async (req: Request, res: Response) => {
   try {
-
     // creating a schema validation using zod
-    
+
     const { student: studentData } = req.body;
-    const zodParseData = studentValidationSchema.parse(studentData)
+    const zodParseData = studentValidationSchema.parse(studentData);
 
     // data validation using joi
     // const {error, value} = studentValidationSchema.validate(studentData)
 
-
     // will call service function to send this data
     const result = await StudentServices.createStudentIntoDB(zodParseData);
-
 
     // if(error){
     //   res.status(500).json({
@@ -28,7 +23,6 @@ const createStudent = async (req: Request, res: Response) => {
     //   })
     // }
 
-    
     // send response
     res.status(200).json({
       success: true,
@@ -79,15 +73,15 @@ const getSingleStudent = async (req: Request, res: Response) => {
   }
 };
 
-const deleteStudent = async (req: Request, res: Response)=>{
+const deleteStudent = async (req: Request, res: Response) => {
   try {
-    const {studentId} = req.params;
+    const { studentId } = req.params;
     const result = await StudentServices.deleteStudentFromDB(studentId);
     res.json(201).json({
       success: true,
       message: 'student is Deleted successfully ',
       data: result,
-    })
+    });
   } catch (error: any) {
     res.status(500).json({
       success: false,
@@ -95,7 +89,7 @@ const deleteStudent = async (req: Request, res: Response)=>{
       error: error,
     });
   }
-}
+};
 
 export const StudentControllers = {
   createStudent,

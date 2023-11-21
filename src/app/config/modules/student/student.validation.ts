@@ -40,7 +40,9 @@ const studentValidationSchema = z.object({
   email: z.string().email(),
   contactNo: z.string(),
   emergencyNo: z.string(),
-  bloodGroup: z.enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-']).optional(),
+  bloodGroup: z
+    .enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'])
+    .optional(),
   presentAddress: z.string(),
   permanentAddress: z.string(),
   guardian: guardianValidationSchema,

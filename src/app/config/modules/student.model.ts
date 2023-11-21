@@ -3,11 +3,14 @@ import {
   TGuardian,
   TLocalGuardian,
   TStudent,
-  StudentMethods,
+
   StudentModel,
   TUserName,
 } from './student/student.interface';
 import validator from 'validator';
+import studentValidationSchema from './student/student.validation';
+import bcrypt from 'bcrypt'
+import config from '../../config/index';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: { 
@@ -54,6 +57,7 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 
 const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({
   id: { type: String, required: true, unique: true },
+  password: { type: String, required: true, maxlength:[20, 'password can not be more than 20'] },
   name: {
     type: userNameSchema,
     required: true,
@@ -104,6 +108,22 @@ const studentSchema = new Schema<TStudent, StudentModel, StudentMethods>({
     default: 'active',
   },
 });
+
+
+// pre save middleware / hook: will work on create() save()
+studentSchema.pre('save', async function(next){
+  console.log(this, 'pre hook: we will save to data');
+  const user = this;
+  user.password = await bcrypt.hash(user.password, Number(config.bcrype_salt_round));
+  next();
+})
+
+// post middleware
+studentSchema.post('save', function(){
+  console.log(this, 'post hook: we save to data');
+})
+
+
 
 // creating a custom static method
 studentSchema.statics.isUserExists = async function(id: string) {
